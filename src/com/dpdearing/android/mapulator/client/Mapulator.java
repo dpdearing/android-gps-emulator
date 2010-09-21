@@ -251,7 +251,7 @@ public class Mapulator implements EntryPoint, MapClickHandler {
       @Override
       public void onSuccess(final Void result) {
          _info.addStyleDependentName(SUCCESS_STYLE);
-         _info.setText("geo fix ");
+         _info.setText("geo fix " + _longitude + " " + _latitude);
       }
       
       /**
