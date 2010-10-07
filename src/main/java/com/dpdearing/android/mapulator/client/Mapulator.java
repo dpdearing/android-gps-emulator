@@ -4,10 +4,8 @@
 
 package com.dpdearing.android.mapulator.client;
 
-import com.dpdearing.android.mapulator.common.LocationService;
 import com.dpdearing.android.mapulator.common.LocationServiceAsync;
 import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -16,7 +14,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.maps.client.MapUIOptions;
 import com.google.gwt.maps.client.MapWidget;
 import com.google.gwt.maps.client.Maps;
-import com.google.gwt.maps.client.control.LargeMapControl;
 import com.google.gwt.maps.client.event.MapClickHandler;
 import com.google.gwt.maps.client.geom.LatLng;
 import com.google.gwt.maps.client.overlay.Marker;
@@ -46,7 +43,7 @@ public class Mapulator implements EntryPoint, MapClickHandler {
     * Create a remote service proxy to talk to the server-side Location service.
     */
    private final LocationServiceAsync _service =
-      GWT.create(LocationService.class);
+         LocationServiceAsync.Util.getInstance();
 
    /**
     * The last marker placed on the map
@@ -95,7 +92,6 @@ public class Mapulator implements EntryPoint, MapClickHandler {
       
       // enable button when port number is changed
       _text.addChangeHandler(new ChangeHandler() {
-         @Override
          public void onChange(final ChangeEvent event) {
             _button.setEnabled(true);
          }
@@ -103,7 +99,6 @@ public class Mapulator implements EntryPoint, MapClickHandler {
       
       // register the button action
       _button.addClickHandler(new ClickHandler() {
-         @Override
          public void onClick(final ClickEvent event) {
             final int port = Integer.valueOf(_text.getText());
             new PortAsyncCallback(port).execute();
@@ -123,9 +118,6 @@ public class Mapulator implements EntryPoint, MapClickHandler {
       
       // Register map click handler
       map.addMapClickHandler(this);
-      // Add some controls for the zoom level
-      map.addControl(new LargeMapControl());
-      
       
       
       // Create panel for textbox, button and info label
@@ -145,7 +137,6 @@ public class Mapulator implements EntryPoint, MapClickHandler {
    /**
     * Handle a map click event
     */
-   @Override
    public void onClick(final MapClickEvent e) {
       final MapWidget sender = e.getSender();
       final Overlay overlay = e.getOverlay();
@@ -191,7 +182,6 @@ public class Mapulator implements EntryPoint, MapClickHandler {
        * 
        * @param result void
        */
-      @Override
       public void onSuccess(final Void result) {
          _button.setEnabled(false);
          _info.addStyleDependentName(SUCCESS_STYLE);
@@ -201,7 +191,6 @@ public class Mapulator implements EntryPoint, MapClickHandler {
       /**
        * Oh no!
        */
-      @Override
       public void onFailure(final Throwable caught) {
          _button.setEnabled(true);
          _info.addStyleDependentName(ERROR_STYLE);
@@ -212,7 +201,6 @@ public class Mapulator implements EntryPoint, MapClickHandler {
       /**
        * Execute service method
        */
-      @Override
       public void execute() {
          // clear info message
          _info.setText("");
@@ -248,7 +236,6 @@ public class Mapulator implements EntryPoint, MapClickHandler {
        * 
        * @param result void
        */
-      @Override
       public void onSuccess(final Void result) {
          _info.addStyleDependentName(SUCCESS_STYLE);
          _info.setText("geo fix " + _longitude + " " + _latitude);
@@ -257,7 +244,6 @@ public class Mapulator implements EntryPoint, MapClickHandler {
       /**
        * Oh no!
        */
-      @Override
       public void onFailure(final Throwable caught) {
          _info.addStyleDependentName(ERROR_STYLE);
          _info.setText("Error setting location: " + caught.getLocalizedMessage());
@@ -266,7 +252,6 @@ public class Mapulator implements EntryPoint, MapClickHandler {
       /**
        * Execute service method
        */
-      @Override
       public void execute() {
          // clear info message
          _info.setText("");

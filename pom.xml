@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  
+  <groupId>com.dpdearing.android.mapulator</groupId>
+  <artifactId>android-mapulator</artifactId>
+  <packaging>war</packaging>
+  <version>0.0.1-SNAPSHOT</version>
+
+  <name>Android Mapulator</name>
+  
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <!-- Compiler configuration -->
+    <maven.compiler.source>1.5</maven.compiler.source>
+    <maven.compiler.target>1.5</maven.compiler.target>
+    <!-- GWT configuration -->
+    <gwt.version>2.0.4</gwt.version>
+    <!-- renamed module to 'mapulator' -->
+    <gwt.module.name>mapulator</gwt.module.name>
+    <gwt.module>com.dpdearing.android.mapulator.Mapulator</gwt.module>
+  </properties>
+  
+  <dependencies>
+    <!-- JTA Java Telnet dependency -->
+    <dependency>
+      <groupId>de.mud</groupId>
+      <artifactId>jta</artifactId>
+      <version>2.6</version>
+      <scope>system</scope>
+      <systemPath>${basedir}/lib/jta26.jar</systemPath>
+    </dependency>
+    
+    <!-- GWT Google Maps API -->
+    <dependency>
+      <groupId>com.google.gwt.google-apis</groupId>
+      <artifactId>gwt-maps</artifactId>
+      <version>1.1.0</version>
+      <scope>system</scope>
+      <systemPath>${basedir}/lib/gwt-maps-1.1.0.jar</systemPath>
+    </dependency>
+
+    <!--  GWT dependencies -->
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-servlet</artifactId>
+      <version>${gwt.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-user</artifactId>
+      <version>${gwt.version}</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+  
+  <build>
+    <outputDirectory>war/WEB-INF/classes</outputDirectory>
+    
+    <pluginManagement>
+      <plugins>
+        <!-- Eclipse plugin version management -->
+        <!-- This is to specify the version because the SNAPSHOT is unhappy -->
+        <plugin>
+          <artifactId>maven-eclipse-plugin</artifactId>
+          <version>2.7</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+    
+    <plugins>
+      <!-- GWT integration -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>gwt-maven-plugin</artifactId>
+        <version>1.2</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>compile</goal>
+              <goal>generateAsync</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <servicePattern>**/*Service.java</servicePattern>
+          <runTarget>${gwt.module.name}/index.html</runTarget>
+        </configuration>
+      </plugin>
+      
+      <!-- Generate a war file with the deployment web.xml -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>2.0.2</version>
+        <configuration>
+          <warSourceDirectory>war</warSourceDirectory>
+        </configuration>
+      </plugin>
+      
+      <!-- Clean the compiled war subdirectories -->
+      <plugin>
+        <artifactId>maven-clean-plugin</artifactId>
+        <version>2.2</version>
+        <configuration>
+          <filesets>
+            <fileset>
+              <directory>war/${gwt.module.name}</directory>
+            </fileset>
+            <fileset>
+              <directory>war/WEB-INF/lib</directory>
+            </fileset>
+          </filesets>
+        </configuration>
+      </plugin>
+      
+      <!-- Set encoding to UTF-8 -->
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>2.3</version>
+        <configuration>
+          <encoding>${project.build.sourceEncoding}</encoding>
+        </configuration>
+      </plugin>
+      
+      <!-- Compiler -->
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>2.0.2</version>
+        <configuration>
+          <showDeprecation>true</showDeprecation>
+          <showWarnings>true</showWarnings>
+          <source>${maven.compiler.source}</source>
+          <target>${maven.compiler.target}</target>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

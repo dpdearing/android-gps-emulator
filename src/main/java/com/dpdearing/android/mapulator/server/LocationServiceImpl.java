@@ -32,7 +32,6 @@ public class LocationServiceImpl extends RemoteServiceServlet implements
    /**
     * {@inheritDoc}
     */
-   @Override
    public void setPort(final int port) throws IOException {
       // disconnect from any previous connection
       _telnet.disconnect();
@@ -43,7 +42,6 @@ public class LocationServiceImpl extends RemoteServiceServlet implements
    /**
     * {@inheritDoc}
     */
-   @Override
    public void setLocation(final double latitude, final double longitude)
          throws IOException {
       // telnet the geo fix location: longitude first!
