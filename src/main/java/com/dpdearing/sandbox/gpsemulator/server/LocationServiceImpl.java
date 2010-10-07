@@ -2,11 +2,11 @@
  * Copyright (c) 2010 David Dearing
  */
 
-package com.dpdearing.android.mapulator.server;
+package com.dpdearing.sandbox.gpsemulator.server;
 
 import java.io.IOException;
 
-import com.dpdearing.android.mapulator.common.LocationService;
+import com.dpdearing.sandbox.gpsemulator.common.LocationService;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import de.mud.telnet.TelnetWrapper;

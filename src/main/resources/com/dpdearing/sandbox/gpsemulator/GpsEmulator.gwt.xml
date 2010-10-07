@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<module rename-to='mapulator'>
+<module rename-to='gpsemulator'>
   <!-- Inherit the core Web Toolkit stuff.                        -->
   <inherits name='com.google.gwt.user.User'/>
 
@@ -16,7 +16,7 @@
   <!-- Other module inherits                                      -->
 
   <!-- Specify the app entry point class.                         -->
-  <entry-point class='com.dpdearing.android.mapulator.client.Mapulator'/>
+  <entry-point class='com.dpdearing.sandbox.gpsemulator.client.GpsEmulator'/>
 
   <!-- Specify the paths for translatable code                    -->
   <source path='client'/>

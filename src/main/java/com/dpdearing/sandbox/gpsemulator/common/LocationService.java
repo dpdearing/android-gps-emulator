@@ -2,7 +2,7 @@
  * Copyright (c) 2010 David Dearing
  */
 
-package com.dpdearing.android.mapulator.common;
+package com.dpdearing.sandbox.gpsemulator.common;
 
 import java.io.IOException;
 

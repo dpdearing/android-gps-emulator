@@ -2,9 +2,9 @@
  * Copyright (c) 2010 David Dearing
  */
 
-package com.dpdearing.android.mapulator.client;
+package com.dpdearing.sandbox.gpsemulator.client;
 
-import com.dpdearing.android.mapulator.common.LocationServiceAsync;
+import com.dpdearing.sandbox.gpsemulator.common.LocationServiceAsync;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -31,7 +31,7 @@ import com.google.gwt.user.client.ui.TextBox;
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
  */
-public class Mapulator implements EntryPoint, MapClickHandler {
+public class GpsEmulator implements EntryPoint, MapClickHandler {
    /**
     * The default emulator port
     */

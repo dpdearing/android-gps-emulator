@@ -8,12 +8,12 @@
   <!-- Servlets -->
   <servlet>
     <servlet-name>locationServlet</servlet-name>
-    <servlet-class>com.dpdearing.android.mapulator.server.LocationServiceImpl</servlet-class>
+    <servlet-class>com.dpdearing.sandbox.gpsemulator.server.LocationServiceImpl</servlet-class>
   </servlet>
   
   <servlet-mapping>
     <servlet-name>locationServlet</servlet-name>
-    <url-pattern>/mapulator/location</url-pattern>
+    <url-pattern>/gpsemulator/location</url-pattern>
   </servlet-mapping>
   
   <!-- Default page to serve -->
