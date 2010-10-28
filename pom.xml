@@ -91,6 +91,12 @@
         </configuration>
       </plugin>
       
+      <!-- Jetty -->
+      <plugin>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>maven-jetty-plugin</artifactId>
+      </plugin>
+      
       <!-- Generate a war file with the deployment web.xml -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
