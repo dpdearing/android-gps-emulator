@@ -90,13 +90,6 @@ public class GpsEmulator implements EntryPoint, MapClickHandler {
       // Create the info/status label
       _info = new InlineLabel();
       
-      // enable button when port number is changed
-      _text.addChangeHandler(new ChangeHandler() {
-         public void onChange(final ChangeEvent event) {
-            _button.setEnabled(true);
-         }
-      });
-      
       // register the button action
       _button.addClickHandler(new ClickHandler() {
          public void onClick(final ClickEvent event) {
@@ -183,7 +176,6 @@ public class GpsEmulator implements EntryPoint, MapClickHandler {
        * @param result void
        */
       public void onSuccess(final Void result) {
-         _button.setEnabled(false);
          _info.addStyleDependentName(SUCCESS_STYLE);
          _info.setText("Connected to port " + _port);
       }
@@ -192,7 +184,6 @@ public class GpsEmulator implements EntryPoint, MapClickHandler {
        * Oh no!
        */
       public void onFailure(final Throwable caught) {
-         _button.setEnabled(true);
          _info.addStyleDependentName(ERROR_STYLE);
          _info.setText("Error making connection on port " + _port + ": "
                + caught.getLocalizedMessage());
