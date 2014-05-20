@@ -23,6 +23,8 @@
     <!-- Compiler configuration -->
     <maven.compiler.source>1.5</maven.compiler.source>
     <maven.compiler.target>1.5</maven.compiler.target>
+    <!-- Jetty configuration -->
+    <jettyVersion>7.3.1.v20110307</jettyVersion>
     <!-- GWT configuration -->
     <gwt.version>2.0.4</gwt.version>
     <!-- renamed module to 'gps-emulator' -->
@@ -58,6 +60,14 @@
       <groupId>com.google.gwt</groupId>
       <artifactId>gwt-user</artifactId>
       <version>${gwt.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    
+    <!-- Jetty dependencies -->    
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-webapp</artifactId>
+      <version>${jettyVersion}</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
@@ -100,6 +110,7 @@
       <plugin>
         <groupId>org.mortbay.jetty</groupId>
         <artifactId>maven-jetty-plugin</artifactId>
+        <version>6.1.26</version>
       </plugin>
       
       <!-- Generate a war file with the deployment web.xml -->
@@ -108,10 +119,63 @@
         <artifactId>maven-war-plugin</artifactId>
         <version>2.0.2</version>
         <configuration>
+          <archive>
+            <manifest>
+              <mainClass>Main</mainClass>
+            </manifest>
+          </archive>
           <warSourceDirectory>war</warSourceDirectory>
         </configuration>
       </plugin>
       
+      <!-- From http://uguptablog.blogspot.com/2012/09/embedded-jetty-executable-war-with.html -->
+      <!-- Ant Task to copy Main.class to the root of the war -->
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>main-class-placement</id>
+            <phase>prepare-package</phase>
+            <configuration>
+              <tasks>
+                <copy todir="${project.build.directory}/${project.artifactId}-${project.version}/">
+                  <fileset dir="${project.build.outputDirectory}">
+                    <include name="Main.class" />
+                  </fileset>
+                </copy>
+              </tasks>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+            
+      <!-- From http://uguptablog.blogspot.com/2012/09/embedded-jetty-executable-war-with.html -->
+      <!-- Extract Jetty classes to the root of the war -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.3</version>
+        <executions>
+          <execution>
+            <id>jetty-classpath</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>unpack-dependencies</goal>
+            </goals>
+            <configuration>
+              <includeGroupIds>org.eclipse.jetty,javax.servlet</includeGroupIds>
+              <excludeArtifactIds>jsp-api,jstl</excludeArtifactIds>
+              <outputDirectory>
+                ${project.build.directory}/${project.artifactId}-${project.version}
+              </outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+   
       <!-- Clean the compiled war subdirectories -->
       <plugin>
         <artifactId>maven-clean-plugin</artifactId>
