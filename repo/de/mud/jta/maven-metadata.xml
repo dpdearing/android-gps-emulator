@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>de.mud</groupId>
+  <artifactId>jta</artifactId>
+  <versioning>
+    <release>2.6</release>
+    <versions>
+      <version>2.6</version>
+    </versions>
+    <lastUpdated>20140520044720</lastUpdated>
+  </versioning>
+</metadata>

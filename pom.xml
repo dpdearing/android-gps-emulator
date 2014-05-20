@@ -11,6 +11,13 @@
 
   <name>Android GPS Emulator</name>
   
+  <repositories>
+    <repository>
+      <id>project.local</id>
+      <url>file://${basedir}/./repo</url>
+    </repository>
+  </repositories>
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <!-- Compiler configuration -->
@@ -29,8 +36,6 @@
       <groupId>de.mud</groupId>
       <artifactId>jta</artifactId>
       <version>2.6</version>
-      <scope>system</scope>
-      <systemPath>${basedir}/lib/jta26.jar</systemPath>
     </dependency>
     
     <!-- GWT Google Maps API -->
