@@ -5,15 +5,17 @@ android-gps-emulator is a GPS location emulator for changing/setting/simulating 
 
 Using GWT and Google Maps in combination with [JTA (Java telnet support)](http://javassh.org/space/start), this is a simple tool for emulating the geospatial (GPS) location of your local android emulator using the telnet geo fix command.
 
-I found it cumbersome to use command line telnet and manually enter specific location coordinates when testing Android applications in the emulator, therefore I created this tool.
+Quick Start
+-----------
+1. Download the [latest release](https://github.com/dpdearing/android-gps-emulator/releases/latest)
+2. Run the executable war: **`java -jar android-gps-emulator-0.1.0.war`**
 
-Getting Started
-===============
+![android-gps-emulator](http://dpdearing.github.io/android-gps-emulator/img/android-gps-emulator.png)
 
+
+GWT Hosted Mode
+---------------
 1. Clone the repository
 2. From the command line execute **`mvn gwt:run`**
 3. Click `Launch Default Browser` from the GWT Development Mode
-
-
-![android-gps-emulator](http://dpdearing.github.io/android-gps-emulator/img/android-gps-emulator.png)
 
