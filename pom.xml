@@ -7,7 +7,7 @@
   <groupId>com.dpdearing.sandbox</groupId>
   <artifactId>android-gps-emulator</artifactId>
   <packaging>war</packaging>
-  <version>0.1.0</version>
+  <version>0.2.0-SNAPSHOT</version>
 
   <name>Android GPS Emulator</name>
   
