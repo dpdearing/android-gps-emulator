@@ -24,7 +24,11 @@ public class Main {
 		Server server = new Server();
 		
 		SelectChannelConnector connector = new SelectChannelConnector();
-		connector.setPort(8080);
+		int port = 8080;
+		if (args.length > 0) {
+			port = Integer.parseInt(args[0]);
+		}
+		connector.setPort(port);
 		server.addConnector(connector);
 		
 		ProtectionDomain domain = Main.class.getProtectionDomain();
