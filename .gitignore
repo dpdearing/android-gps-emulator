@@ -1,6 +1,8 @@
 .classpath
 .project
 .settings
+.idea
+*.iml
 
 war
 target

@@ -1,9 +1,0 @@
-syntax:glob
-.hgignore
-*.orig
-.*~
-.project
-.classpath
-.settings
-target
-war
