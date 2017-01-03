@@ -19,19 +19,38 @@
   </repositories>
 
   <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <!-- Compiler configuration -->
-    <maven.compiler.source>1.5</maven.compiler.source>
-    <maven.compiler.target>1.5</maven.compiler.target>
-    <!-- Jetty configuration -->
-    <jettyVersion>7.3.1.v20110307</jettyVersion>
     <!-- GWT configuration -->
-    <gwt.version>2.0.4</gwt.version>
-    <!-- renamed module to 'gps-emulator' -->
-    <gwt.module.name>gpsemulator</gwt.module.name>
+    <gwt.version>2.8.0</gwt.version>
+    <!-- Jetty configuration -->
+    <jetty.version>9.2.14.v20151106</jetty.version>
+
+    <!-- Compiler configuration -->
+    <!-- Setting maven.compiler.source to something different to 1.8
+         needs that you configure the sourceLevel in gwt-maven-plugin since
+         GWT compiler 2.8 requires 1.8 (see gwt-maven-plugin block below) -->
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
     <gwt.module>com.dpdearing.sandbox.gpsemulator.GpsEmulator</gwt.module>
+    <gwt.module.name>gpsemulator</gwt.module.name>
   </properties>
-  
+
+  <dependencyManagement>
+    <dependencies>
+      <!-- ensure all GWT dependencies use the same version (unless overridden) -->
+      <dependency>
+        <groupId>com.google.gwt</groupId>
+        <artifactId>gwt</artifactId>
+        <version>${gwt.version}</version>
+        <scope>import</scope>
+        <type>pom</type>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <dependencies>
     <!-- JTA Java Telnet dependency -->
     <dependency>
@@ -40,58 +59,46 @@
       <version>2.6</version>
     </dependency>
     
-    <!-- GWT Google Maps API -->
-    <dependency>
-      <groupId>com.google.gwt.google-apis</groupId>
-      <artifactId>gwt-maps</artifactId>
-      <version>1.1.0</version>
-      <scope>system</scope>
-      <systemPath>${basedir}/lib/gwt-maps-1.1.0.jar</systemPath>
-    </dependency>
-
-    <!--  GWT dependencies -->
+    <!-- GWT dependencies -->
     <dependency>
       <groupId>com.google.gwt</groupId>
       <artifactId>gwt-servlet</artifactId>
-      <version>${gwt.version}</version>
-      <scope>compile</scope>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>com.google.gwt</groupId>
       <artifactId>gwt-user</artifactId>
-      <version>${gwt.version}</version>
       <scope>provided</scope>
     </dependency>
-    
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-dev</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-codeserver</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
     <!-- Jetty dependencies -->    
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-webapp</artifactId>
-      <version>${jettyVersion}</version>
+      <version>${jetty.version}</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
   
   <build>
-    <outputDirectory>war/WEB-INF/classes</outputDirectory>
-    
-    <pluginManagement>
-      <plugins>
-        <!-- Eclipse plugin version management -->
-        <!-- This is to specify the version because the SNAPSHOT is unhappy -->
-        <plugin>
-          <artifactId>maven-eclipse-plugin</artifactId>
-          <version>2.7</version>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-    
+    <outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/classes</outputDirectory>
+
     <plugins>
-      <!-- GWT integration -->
+      <!-- GWT Maven Plugin-->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>gwt-maven-plugin</artifactId>
-        <version>1.2</version>
+        <version>${gwt.version}</version>
         <executions>
           <execution>
             <goals>
@@ -99,19 +106,51 @@
               <goal>generateAsync</goal>
             </goals>
           </execution>
+          <execution>
+            <!-- Run tests through gwt:test, this allows reusing the plugin configuration for GWTTestCases -->
+            <id>gwt-tests</id>
+            <phase>test</phase>
+            <goals>
+              <goal>test</goal>
+            </goals>
+          </execution>
         </executions>
         <configuration>
-          <servicePattern>**/*Service.java</servicePattern>
+          <!-- Plugin configuration. There are many available options,
+               see gwt-maven-plugin documentation at codehaus.org -->
+          <modules>
+            <module>com.dpdearing.sandbox.gpsemulator</module>
+          </modules>
+          <!-- GWT compiler 2.8 requires 1.8, hence define sourceLevel here if you use
+               a different source language for java compilation -->
+          <sourceLevel>1.8</sourceLevel>
+          <!-- URL that should be opened by DevMode (gwt:run). -->
           <runTarget>${gwt.module.name}/index.html</runTarget>
+          <copyWebapp>true</copyWebapp>
+          <!-- Ask GWT to create the Story of Your Compile (SOYC) (gwt:compile) -->
+          <compileReport>true</compileReport>
+          <!-- Run tests using HtmlUnit -->
+          <mode>htmlunit</mode>
+          <!-- Tests patterns -->
+          <includes>**/Test*.java,**/*Test.java,**/*TestCase.java</includes>
         </configuration>
       </plugin>
-      
-      <!-- Jetty -->
+
+      <!-- Skip normal test execution, we use gwt:test instead -->
       <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.17</version>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+
+      <!-- Jetty -->
+      <!--plugin>
         <groupId>org.mortbay.jetty</groupId>
         <artifactId>maven-jetty-plugin</artifactId>
         <version>6.1.26</version>
-      </plugin>
+      </plugin-->
       
       <!-- Generate a war file with the deployment web.xml -->
       <plugin>
@@ -175,43 +214,7 @@
           </execution>
         </executions>
       </plugin>
-   
-      <!-- Clean the compiled war subdirectories -->
-      <plugin>
-        <artifactId>maven-clean-plugin</artifactId>
-        <version>2.2</version>
-        <configuration>
-          <filesets>
-            <fileset>
-              <directory>war/${gwt.module.name}</directory>
-            </fileset>
-            <fileset>
-              <directory>war/WEB-INF/lib</directory>
-            </fileset>
-          </filesets>
-        </configuration>
-      </plugin>
-      
-      <!-- Set encoding to UTF-8 -->
-      <plugin>
-        <artifactId>maven-resources-plugin</artifactId>
-        <version>2.3</version>
-        <configuration>
-          <encoding>${project.build.sourceEncoding}</encoding>
-        </configuration>
-      </plugin>
-      
-      <!-- Compiler -->
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>2.0.2</version>
-        <configuration>
-          <showDeprecation>true</showDeprecation>
-          <showWarnings>true</showWarnings>
-          <source>${maven.compiler.source}</source>
-          <target>${maven.compiler.target}</target>
-        </configuration>
-      </plugin>
+
     </plugins>
   </build>
 

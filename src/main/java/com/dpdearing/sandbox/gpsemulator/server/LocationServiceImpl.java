@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010 David Dearing
+ * Copyright (c) 2010-17 David Dearing
  */
 
 package com.dpdearing.sandbox.gpsemulator.server;

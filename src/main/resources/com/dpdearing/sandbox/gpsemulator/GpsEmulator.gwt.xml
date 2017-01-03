@@ -4,7 +4,7 @@
   <inherits name='com.google.gwt.user.User'/>
 
   <!-- Inherit the Google Maps stuff.                             -->
-  <inherits name='com.google.gwt.maps.GoogleMaps' />
+  <!--inherits name='com.google.gwt.maps.GoogleMaps' /-->
   
   <!-- Inherit the default GWT style sheet.  You can change       -->
   <!-- the theme of your GWT application by uncommenting          -->

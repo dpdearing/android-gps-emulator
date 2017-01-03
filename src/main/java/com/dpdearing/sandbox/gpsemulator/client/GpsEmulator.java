@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010 David Dearing
+ * Copyright (c) 2010-17 David Dearing
  */
 
 package com.dpdearing.sandbox.gpsemulator.client;
@@ -9,13 +9,6 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.maps.client.MapUIOptions;
-import com.google.gwt.maps.client.MapWidget;
-import com.google.gwt.maps.client.Maps;
-import com.google.gwt.maps.client.event.MapClickHandler;
-import com.google.gwt.maps.client.geom.LatLng;
-import com.google.gwt.maps.client.overlay.Marker;
-import com.google.gwt.maps.client.overlay.Overlay;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -29,7 +22,7 @@ import com.google.gwt.user.client.ui.TextBox;
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
  */
-public class GpsEmulator implements EntryPoint, MapClickHandler {
+public class GpsEmulator implements EntryPoint {
    /**
     * The default emulator port
     */
@@ -46,7 +39,7 @@ public class GpsEmulator implements EntryPoint, MapClickHandler {
    /**
     * The last marker placed on the map
     */
-   private Marker _lastMarker = null;
+//   private Marker _lastMarker = null;
    
    /**
     * The textbox, button, and info label for configuring the port.
@@ -66,14 +59,14 @@ public class GpsEmulator implements EntryPoint, MapClickHandler {
        * application on a public server, but a blank key will work for an
        * application served from localhost.
       */
-      Maps.loadMapsApi("", "2", false, new Runnable() {
-         public void run() {
+//      Maps.loadMapsApi("", "2", false, new Runnable() {
+//         public void run() {
             // initialize the UI
             buildUi();
-            // initialize the default port
-            new PortAsyncCallback(DEFAULT_PORT).execute();
-         }
-      });
+//            // initialize the default port
+//            new PortAsyncCallback(DEFAULT_PORT).execute();
+//         }
+//      });
    }
    
    /**
@@ -97,18 +90,18 @@ public class GpsEmulator implements EntryPoint, MapClickHandler {
       });
       
       
-      // Open a map centered on Cawker City, KS USA
-      final LatLng cawkerCity = LatLng.newInstance(39.509, -98.434);
-      final MapWidget map = new MapWidget(cawkerCity, 2);
-      map.setSize("100%", "100%");
-      
-      // Workaround for bug with click handler & setUItoDefaults() - see issue 260
-      final MapUIOptions opts = map.getDefaultUI();
-      opts.setDoubleClick(false);
-      map.setUI(opts);
-      
-      // Register map click handler
-      map.addMapClickHandler(this);
+//      // Open a map centered on Cawker City, KS USA
+//      final LatLng cawkerCity = LatLng.newInstance(39.509, -98.434);
+//      final MapWidget map = new MapWidget(cawkerCity, 2);
+//      map.setSize("100%", "100%");
+//
+//      // Workaround for bug with click handler & setUItoDefaults() - see issue 260
+//      final MapUIOptions opts = map.getDefaultUI();
+//      opts.setDoubleClick(false);
+//      map.setUI(opts);
+//
+//      // Register map click handler
+//      map.addMapClickHandler(this);
       
       
       // Create panel for textbox, button and info label
@@ -118,40 +111,40 @@ public class GpsEmulator implements EntryPoint, MapClickHandler {
       div.add(_info);
       // Dock the map
       final DockLayoutPanel dock = new DockLayoutPanel(Unit.PX);
-      dock.addNorth(map, 500);
+//      dock.addNorth(map, 500);
       
       // Add the map dock to the div panel
       div.add(dock);
       RootLayoutPanel.get().add(div);
    }
 
-   /**
-    * Handle a map click event
-    */
-   public void onClick(final MapClickEvent e) {
-      final MapWidget sender = e.getSender();
-      final Overlay overlay = e.getOverlay();
-      final LatLng point = e.getLatLng();
-
-      if (overlay != null && overlay instanceof Marker) {
-         // clear a marker that has been clicked on
-         sender.removeOverlay(overlay);
-      } else {
-         // clear the last-placed marker ...
-         if (_lastMarker != null && _lastMarker instanceof Marker) {
-           sender.removeOverlay(_lastMarker);
-           _lastMarker = null;
-         }
-         
-         // ... and add the new marker
-         final Marker mark = new Marker(point);
-         _lastMarker = mark;
-         sender.addOverlay(mark);
-         
-         // set the location
-         new GeoFixAsyncCallback(point.getLatitude(), point.getLongitude()).execute();
-      }
-   }
+//   /**
+//    * Handle a map click event
+//    */
+//   public void onClick(final MapClickEvent e) {
+//      final MapWidget sender = e.getSender();
+//      final Overlay overlay = e.getOverlay();
+//      final LatLng point = e.getLatLng();
+//
+//      if (overlay != null && overlay instanceof Marker) {
+//         // clear a marker that has been clicked on
+//         sender.removeOverlay(overlay);
+//      } else {
+//         // clear the last-placed marker ...
+//         if (_lastMarker != null && _lastMarker instanceof Marker) {
+//           sender.removeOverlay(_lastMarker);
+//           _lastMarker = null;
+//         }
+//
+//         // ... and add the new marker
+//         final Marker mark = new Marker(point);
+//         _lastMarker = mark;
+//         sender.addOverlay(mark);
+//
+//         // set the location
+//         new GeoFixAsyncCallback(point.getLatitude(), point.getLongitude()).execute();
+//      }
+//   }
    
    /**
     * Asynchronous callback for setting the telnet port.
