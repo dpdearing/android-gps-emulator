@@ -6,13 +6,18 @@ package com.dpdearing.sandbox.gpsemulator.client;
 
 import com.dpdearing.sandbox.gpsemulator.common.LocationServiceAsync;
 import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.maps.client.MapOptions;
+import com.google.gwt.maps.client.MapWidget;
+import com.google.gwt.maps.client.base.LatLng;
+import com.google.gwt.maps.client.events.click.ClickMapEvent;
+import com.google.gwt.maps.client.events.click.ClickMapHandler;
+import com.google.gwt.maps.client.overlays.Marker;
+import com.google.gwt.maps.client.overlays.MarkerOptions;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
@@ -22,7 +27,7 @@ import com.google.gwt.user.client.ui.TextBox;
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
  */
-public class GpsEmulator implements EntryPoint {
+public class GpsEmulator implements EntryPoint, ClickMapHandler {
    /**
     * The default emulator port
     */
@@ -37,10 +42,11 @@ public class GpsEmulator implements EntryPoint {
          LocationServiceAsync.Util.getInstance();
 
    /**
-    * The last marker placed on the map
+    * The map and current marker shown
     */
-//   private Marker _lastMarker = null;
-   
+   private MapWidget _map;
+   private Marker _currentMarker = null;
+
    /**
     * The textbox, button, and info label for configuring the port.
     */
@@ -52,21 +58,13 @@ public class GpsEmulator implements EntryPoint {
     * This is the entry point method.
     */
    public void onModuleLoad() {
-      /*
-       * Asynchronously loads the Maps API.
-       *
-       * The first parameter should be a valid Maps API Key to deploy this
-       * application on a public server, but a blank key will work for an
-       * application served from localhost.
-      */
-//      Maps.loadMapsApi("", "2", false, new Runnable() {
-//         public void run() {
-            // initialize the UI
-            buildUi();
-//            // initialize the default port
-//            new PortAsyncCallback(DEFAULT_PORT).execute();
-//         }
-//      });
+      // This _should_ be using LoadApi.go(onLoad, loadLibraries, sensor) to
+      // then call buildUi() from within a Runnable (onLoad) but this does not
+      // seem to work.  The map does not appear until after resizing the browser
+      // window.  Instead, the Google Maps API is loaded directly from a <script>
+      // tag at the bottom of index.html, which seems to consistently load before
+      // onModuleLoad is called.
+      buildUi();
    }
    
    /**
@@ -76,11 +74,13 @@ public class GpsEmulator implements EntryPoint {
       // Create a textbox and set default port
       _text = new TextBox();
       _text.setText(String.valueOf(DEFAULT_PORT));
-      // Create button to change default port 
+
+      // Create button to change default port
       _button = new Button("Change Emulator Port");
-      // Create the info/status label
+      // Create the info/status label, initially not visible
       _info = new InlineLabel();
-      
+      _info.setVisible(false);
+
       // register the button action
       _button.addClickHandler(new ClickHandler() {
          public void onClick(final ClickEvent event) {
@@ -89,63 +89,72 @@ public class GpsEmulator implements EntryPoint {
          }
       });
       
-      
-//      // Open a map centered on Cawker City, KS USA
-//      final LatLng cawkerCity = LatLng.newInstance(39.509, -98.434);
-//      final MapWidget map = new MapWidget(cawkerCity, 2);
-//      map.setSize("100%", "100%");
-//
-//      // Workaround for bug with click handler & setUItoDefaults() - see issue 260
-//      final MapUIOptions opts = map.getDefaultUI();
-//      opts.setDoubleClick(false);
-//      map.setUI(opts);
-//
-//      // Register map click handler
-//      map.addMapClickHandler(this);
-      
-      
       // Create panel for textbox, button and info label
       final FlowPanel div = new FlowPanel();
+      div.setStylePrimaryName("emulator-controls");
+      _text.setStyleName("emulator-port");
+      _button.setStyleName("emulator-connect");
+      _info.setStyleName("emulator-info");
       div.add(_text);
       div.add(_button);
       div.add(_info);
-      // Dock the map
-      final DockLayoutPanel dock = new DockLayoutPanel(Unit.PX);
-//      dock.addNorth(map, 500);
-      
-      // Add the map dock to the div panel
-      div.add(dock);
+
+      // Create a map centered on Cawker City, KS USA
+      final MapOptions opts = MapOptions.newInstance();
+      final LatLng cawkerCity = LatLng.newInstance(39.509, -98.434);
+      opts.setCenter(cawkerCity);
+      opts.setZoom(4);
+
+      _map = new MapWidget(opts);
+
+      // Register map click handler
+      _map.addClickHandler(this);
+
+      // add the controls before the map so that the div doesn't cover the map
       RootLayoutPanel.get().add(div);
+      RootLayoutPanel.get().add(_map);
    }
 
-//   /**
-//    * Handle a map click event
-//    */
-//   public void onClick(final MapClickEvent e) {
-//      final MapWidget sender = e.getSender();
-//      final Overlay overlay = e.getOverlay();
-//      final LatLng point = e.getLatLng();
-//
-//      if (overlay != null && overlay instanceof Marker) {
-//         // clear a marker that has been clicked on
-//         sender.removeOverlay(overlay);
-//      } else {
-//         // clear the last-placed marker ...
-//         if (_lastMarker != null && _lastMarker instanceof Marker) {
-//           sender.removeOverlay(_lastMarker);
-//           _lastMarker = null;
-//         }
-//
-//         // ... and add the new marker
-//         final Marker mark = new Marker(point);
-//         _lastMarker = mark;
-//         sender.addOverlay(mark);
-//
-//         // set the location
-//         new GeoFixAsyncCallback(point.getLatitude(), point.getLongitude()).execute();
-//      }
-//   }
-   
+   /**
+    * Handle a map click event
+    */
+   public void onEvent(ClickMapEvent clickMapEvent) {
+      final LatLng point = clickMapEvent.getMouseEvent().getLatLng();
+
+      // clear the last-placed marker ...
+      if (_currentMarker != null) {
+         _currentMarker.clear();
+      }
+
+      // ... and add the new marker
+      MarkerOptions opts = MarkerOptions.newInstance();
+      opts.setMap(_map);
+      opts.setPosition(point);
+      _currentMarker = Marker.newInstance(opts);
+
+      // set the location
+      new GeoFixAsyncCallback(point.getLatitude(), point.getLongitude()).execute();
+   }
+
+   private void setSuccessMessage(String message) {
+      _info.addStyleDependentName(SUCCESS_STYLE);
+      _info.setText(message);
+      _info.setVisible(true);
+   }
+
+   private void setErrorMessage(String message) {
+      _info.addStyleDependentName(ERROR_STYLE);
+      _info.setText(message);
+      _info.setVisible(true);
+   }
+
+   private void clearMessage() {
+      _info.setText("");
+      _info.removeStyleDependentName(ERROR_STYLE);
+      _info.removeStyleDependentName(SUCCESS_STYLE);
+      _info.setVisible(false);
+   }
+
    /**
     * Asynchronous callback for setting the telnet port.
     */
@@ -167,16 +176,14 @@ public class GpsEmulator implements EntryPoint {
        * @param result void
        */
       public void onSuccess(final Void result) {
-         _info.addStyleDependentName(SUCCESS_STYLE);
-         _info.setText("Connected to port " + _port);
+         setSuccessMessage("Connected to port " + _port);
       }
 
       /**
        * Oh no!
        */
       public void onFailure(final Throwable caught) {
-         _info.addStyleDependentName(ERROR_STYLE);
-         _info.setText("Error making connection on port " + _port + ": "
+         setErrorMessage("Error making connection on port " + _port + ": "
                + caught.getLocalizedMessage());
       }
       
@@ -184,11 +191,7 @@ public class GpsEmulator implements EntryPoint {
        * Execute service method
        */
       public void execute() {
-         // clear info message
-         _info.setText("");
-         _info.removeStyleDependentName(ERROR_STYLE);
-         _info.removeStyleDependentName(SUCCESS_STYLE);
-         
+         clearMessage();
          _service.setPort(_port, this);
       }
    }
@@ -219,27 +222,21 @@ public class GpsEmulator implements EntryPoint {
        * @param result void
        */
       public void onSuccess(final Void result) {
-         _info.addStyleDependentName(SUCCESS_STYLE);
-         _info.setText("geo fix " + _longitude + " " + _latitude);
+         setSuccessMessage("geo fix " + _longitude + " " + _latitude);
       }
       
       /**
        * Oh no!
        */
       public void onFailure(final Throwable caught) {
-         _info.addStyleDependentName(ERROR_STYLE);
-         _info.setText("Error setting location: " + caught.getLocalizedMessage());
+         setErrorMessage("Error setting location: " + caught.getLocalizedMessage());
       }
 
       /**
        * Execute service method
        */
       public void execute() {
-         // clear info message
-         _info.setText("");
-         _info.removeStyleDependentName(ERROR_STYLE);
-         _info.removeStyleDependentName(SUCCESS_STYLE);
-
+         clearMessage();
          _service.setLocation(_latitude, _longitude, this);
       }
    }

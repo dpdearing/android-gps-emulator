@@ -11,8 +11,44 @@
     <title>Android GPS Emulator: Geospatial Location Emulation</title>
     <script type="text/javascript" language="javascript" src="gpsemulator.nocache.js"></script>
     <style type="text/css">
-      .gwt-InlineLabel-error {color: red;}
-      .gwt-InlineLabel-success {color: green;}
+      /* Makes the page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      .emulator-controls {
+        z-index: 1;
+        display: inline-block;
+        top: 12px !important;
+        left: 115px!important;
+        bottom: initial !important;
+        right: initial !important;
+        pointer-events: none;
+      }
+      .emulator-port {
+        margin: 0;
+        padding: 2px;
+        font-size: 1.1em;
+        font-family: Roboto,Arial,sans-serif;
+        pointer-events: initial;
+      }
+      .emulator-connect {
+        margin: 0 5px;
+        font-size: 1.1em;
+        font-family: Roboto,Arial,sans-serif;
+        pointer-events: initial;
+      }
+      .emulator-info {
+        display: block;
+        margin: 5px 0 0 1px;
+        padding: 2px;
+        background-color: white;
+        font-family: Roboto,Arial,sans-serif;
+        pointer-events: initial;
+      }
+      .emulator-info-error {color: #c30000;}
+      .emulator-info-success {color: green;}
     </style>
   </head>
 
@@ -25,6 +61,11 @@
         in order for this application to display correctly.
       </div>
     </noscript>
+
+    <!-- Load Google Maps API, no API key for localhost -->
+    <!-- TODO Might need to remove the async and defer attributes to guarantee  -->
+    <!-- TODO  that the script loads before GpsEmulator.onModuleLoad is called. -->
+    <script src="https://maps.googleapis.com/maps/api/js" async defer></script>
 
   </body>
 </html>

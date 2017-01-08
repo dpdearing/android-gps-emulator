@@ -81,7 +81,14 @@
       <scope>provided</scope>
     </dependency>
 
-    <!-- Jetty dependencies -->    
+    <!-- GWT Maps API V3 -->
+    <dependency>
+      <groupId>com.github.branflake2267</groupId>
+      <artifactId>gwt-maps-api</artifactId>
+      <version>3.10.0-alpha-7</version>
+    </dependency>
+
+    <!-- Jetty dependencies -->
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-webapp</artifactId>
