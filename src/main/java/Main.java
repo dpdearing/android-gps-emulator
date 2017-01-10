@@ -5,8 +5,10 @@
 import java.net.URL;
 import java.security.ProtectionDomain;
  
+import org.eclipse.jetty.server.HttpConfiguration;
+import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.nio.SelectChannelConnector;
+import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.webapp.WebAppContext;
  
 /**
@@ -22,14 +24,15 @@ public class Main {
 	public static void main(String[] args) throws Exception
 	{
 		Server server = new Server();
-		
-		SelectChannelConnector connector = new SelectChannelConnector();
-		int port = 8080;
+
+		HttpConfiguration config = new HttpConfiguration();
+		ServerConnector http = new ServerConnector(server, new HttpConnectionFactory(config));
+
 		if (args.length > 0) {
-			port = Integer.parseInt(args[0]);
+			int port = Integer.parseInt(args[0]);
+			http.setPort(port);
 		}
-		connector.setPort(port);
-		server.addConnector(connector);
+		server.addConnector(http);
 		
 		ProtectionDomain domain = Main.class.getProtectionDomain();
 		URL location = domain.getCodeSource().getLocation();
