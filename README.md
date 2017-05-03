@@ -9,6 +9,7 @@ Quick Start
 -----------
 1. Download the [latest release](https://github.com/dpdearing/android-gps-emulator/releases/latest)
 2. Run the executable war: **`java -jar android-gps-emulator-0.1.0.war`**
+3. http://localhost:8080/gpsemulator/
 
 ![android-gps-emulator](http://dpdearing.github.io/android-gps-emulator/img/android-gps-emulator.png)
 

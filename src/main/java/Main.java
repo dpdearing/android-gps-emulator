@@ -12,7 +12,7 @@ import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.webapp.WebAppContext;
  
 /**
- * Embedded Jetty xecutable WAR main entry point.
+ * Embedded Jetty executable WAR main entry point.
  * 
  * See http://uguptablog.blogspot.com/2012/09/embedded-jetty-executable-war-with.html
  */
@@ -28,10 +28,12 @@ public class Main {
 		HttpConfiguration config = new HttpConfiguration();
 		ServerConnector http = new ServerConnector(server, new HttpConnectionFactory(config));
 
+		int port = 8080;
 		if (args.length > 0) {
-			int port = Integer.parseInt(args[0]);
-			http.setPort(port);
+			port = Integer.parseInt(args[0]);
 		}
+
+		http.setPort(port);
 		server.addConnector(http);
 		
 		ProtectionDomain domain = Main.class.getProtectionDomain();
