@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 David Dearing
+ * Copyright (c) 2014-17 David Dearing
  */
 
 import java.net.URL;

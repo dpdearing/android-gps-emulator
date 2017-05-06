@@ -1,0 +1,71 @@
+<!doctype html>
+<!-- The DOCTYPE declaration above will set the    -->
+<!-- browser's rendering engine into               -->
+<!-- "Standards Mode". Replacing this declaration  -->
+<!-- with a "Quirks Mode" doctype may lead to some -->
+<!-- differences in layout.                        -->
+
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Android GPS Emulator: Geospatial Location Emulation</title>
+    <script type="text/javascript" language="javascript" src="gpsemulator.nocache.js"></script>
+    <style type="text/css">
+      /* Makes the page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      .emulator-controls {
+        z-index: 1;
+        display: inline-block;
+        top: 12px !important;
+        left: 115px!important;
+        bottom: initial !important;
+        right: initial !important;
+        pointer-events: none;
+      }
+      .emulator-port {
+        margin: 0;
+        padding: 2px;
+        font-size: 1.1em;
+        font-family: Roboto,Arial,sans-serif;
+        pointer-events: initial;
+      }
+      .emulator-connect {
+        margin: 0 5px;
+        font-size: 1.1em;
+        font-family: Roboto,Arial,sans-serif;
+        pointer-events: initial;
+      }
+      .emulator-info {
+        display: block;
+        margin: 5px 0 0 1px;
+        padding: 2px;
+        background-color: white;
+        font-family: Roboto,Arial,sans-serif;
+        pointer-events: initial;
+      }
+      .emulator-info-error {color: #c30000;}
+      .emulator-info-success {color: green;}
+    </style>
+  </head>
+
+  <body>
+
+    <!-- RECOMMENDED if your web app will not function without JavaScript enabled -->
+    <noscript>
+      <div style="width: 22em; position: absolute; left: 50%; margin-left: -11em; color: red; background-color: white; border: 1px solid red; padding: 4px; font-family: sans-serif">
+        Your web browser must have JavaScript enabled
+        in order for this application to display correctly.
+      </div>
+    </noscript>
+
+    <!-- Load Google Maps API, no API key for localhost -->
+    <!-- TODO Might need to remove the async and defer attributes to guarantee  -->
+    <!-- TODO  that the script loads before GpsEmulator.onModuleLoad is called. -->
+    <script src="https://maps.googleapis.com/maps/api/js" async defer></script>
+
+  </body>
+</html>
