@@ -204,8 +204,7 @@
               <goal>unpack-dependencies</goal>
             </goals>
             <configuration>
-              <includeGroupIds>org.eclipse.jetty,javax.servlet</includeGroupIds>
-              <excludeArtifactIds>jsp-api,jstl</excludeArtifactIds>
+              <includeGroupIds>org.eclipse.jetty,javax.servlet,org.mortbay.jasper</includeGroupIds>
               <outputDirectory>
                 ${project.build.directory}/${project.artifactId}-${project.version}
               </outputDirectory>
