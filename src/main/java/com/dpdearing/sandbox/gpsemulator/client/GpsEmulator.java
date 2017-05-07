@@ -29,9 +29,11 @@ import com.google.gwt.user.client.ui.TextBox;
  */
 public class GpsEmulator implements EntryPoint, ClickMapHandler {
    /**
-    * The default emulator port
+    * The default emulator hostname port
     */
+   static private final String DEFAULT_HOST = "localhost";
    static private final int DEFAULT_PORT = 5554;
+
    static private final String SUCCESS_STYLE = "success";
    static private final String ERROR_STYLE = "error";
    
@@ -48,9 +50,10 @@ public class GpsEmulator implements EntryPoint, ClickMapHandler {
    private Marker _currentMarker = null;
 
    /**
-    * The textbox, button, and info label for configuring the port.
+    * The textboxes, button, and info label for configuring the host and port.
     */
-   private TextBox _text;
+   private TextBox _hostname;
+   private TextBox _port;
    private Button _button;
    private Label _info;
    
@@ -71,12 +74,16 @@ public class GpsEmulator implements EntryPoint, ClickMapHandler {
     * Initialize the UI
     */
    private void buildUi() {
-      // Create a textbox and set default port
-      _text = new TextBox();
-      _text.setText(String.valueOf(DEFAULT_PORT));
+      // Create textboxes and set default hostname and port
+      _hostname = new TextBox();
+      _hostname.setText(DEFAULT_HOST);
+      _hostname.getElement().setPropertyString("placeholder", "hostname");
+      _port = new TextBox();
+      _port.setText(String.valueOf(DEFAULT_PORT));
+      _port.getElement().setPropertyString("placeholder", "port");
 
-      // Create button to change default port
-      _button = new Button("Change Emulator Port");
+      // Create button to connect
+      _button = new Button("Connect");
       // Create the info/status label, initially not visible
       _info = new InlineLabel();
       _info.setVisible(false);
@@ -84,18 +91,21 @@ public class GpsEmulator implements EntryPoint, ClickMapHandler {
       // register the button action
       _button.addClickHandler(new ClickHandler() {
          public void onClick(final ClickEvent event) {
-            final int port = Integer.valueOf(_text.getText());
-            new PortAsyncCallback(port).execute();
+            final String hostname = _hostname.getText();
+            final int port = Integer.valueOf(_port.getText());
+            new PortAsyncCallback(hostname, port).execute();
          }
       });
       
       // Create panel for textbox, button and info label
       final FlowPanel div = new FlowPanel();
       div.setStylePrimaryName("emulator-controls");
-      _text.setStyleName("emulator-port");
+      _hostname.setStyleName("emulator-hostname");
+      _port.setStyleName("emulator-port");
       _button.setStyleName("emulator-connect");
       _info.setStyleName("emulator-info");
-      div.add(_text);
+      div.add(_hostname);
+      div.add(_port);
       div.add(_button);
       div.add(_info);
 
@@ -159,14 +169,17 @@ public class GpsEmulator implements EntryPoint, ClickMapHandler {
     * Asynchronous callback for setting the telnet port.
     */
    private class PortAsyncCallback implements AsyncCallback<Void>, Command {
+      private final String _hostname;
       private final int _port;
       
       /**
        * Constructor
        * 
+       * @param hostname the hostname
        * @param port the port
        */
-      public PortAsyncCallback(final int port) {
+      public PortAsyncCallback(final String hostname, final int port) {
+         _hostname = hostname;
          _port = port;
       }
       
@@ -176,14 +189,14 @@ public class GpsEmulator implements EntryPoint, ClickMapHandler {
        * @param result void
        */
       public void onSuccess(final Void result) {
-         setSuccessMessage("Connected to port " + _port);
+         setSuccessMessage("Connected to " + _hostname + ":" + _port);
       }
 
       /**
        * Oh no!
        */
       public void onFailure(final Throwable caught) {
-         setErrorMessage("Error making connection on port " + _port + ": "
+         setErrorMessage("Error connecting to " + _hostname + ":" + _port + " - "
                + caught.getLocalizedMessage());
       }
       
@@ -192,7 +205,7 @@ public class GpsEmulator implements EntryPoint, ClickMapHandler {
        */
       public void execute() {
          clearMessage();
-         _service.setPort(_port, this);
+         _service.connect(_hostname, _port, this);
       }
    }
    

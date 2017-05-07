@@ -15,13 +15,15 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 @RemoteServiceRelativePath("location")
 public interface LocationService extends RemoteService {
    /**
-    * Set the Telnet port
-    * 
+    * Connect to the hostname and port
+    *
+    * @param hostname
+    *           the hostname
     * @param port
     *           the port number
     * @throws IOException
     */
-   void setPort(int port) throws IOException;
+   void connect(String hostname, int port) throws IOException;
 
    /**
     * Set the geospatial location

@@ -58,12 +58,12 @@ public class LocationServiceImpl extends RemoteServiceServlet implements Locatio
    /**
     * {@inheritDoc}
     */
-   public void setPort(final int port) throws IOException {
+   public void connect(final String hostname, final int port) throws IOException {
       // disconnect from any previous connection
       _telnet.disconnect();
-      // connect to the specified port
-      logger.info("Connecting to emulator at localhost:" + port);
-      _telnet.connect("localhost", port);
+      // connect to the specified host
+      logger.info("Connecting to emulator at "+ hostname + ":" + port);
+      _telnet.connect(hostname, port);
       if (_emulator_console_auth_token == null) {
          logger.info("No emulator_console_auth_token; skipping authentication");
       } else {
