@@ -130,20 +130,42 @@ public class GpsEmulator implements EntryPoint, ClickMapHandler {
     */
    public void onEvent(ClickMapEvent clickMapEvent) {
       final LatLng point = clickMapEvent.getMouseEvent().getLatLng();
+      
+      // set the location
+      new GeoFixAsyncCallback(point.getLatitude(), point.getLongitude()).execute();
+   }
 
-      // clear the last-placed marker ...
-      if (_currentMarker != null) {
-         _currentMarker.clear();
-      }
+   /**
+    * Create and add a new marker
+    *
+    * @param latitude
+    * @param longitude
+    * @return
+    */
+   private Marker addMarker(double latitude, double longitude) {
+      return addMarker(LatLng.newInstance(latitude, longitude));
+   }
 
-      // ... and add the new marker
+   /**
+    * Create and add a new marker
+    *
+    * @param point
+    * @return
+    */
+   private Marker addMarker(LatLng point) {
       MarkerOptions opts = MarkerOptions.newInstance();
       opts.setMap(_map);
       opts.setPosition(point);
-      _currentMarker = Marker.newInstance(opts);
+      return Marker.newInstance(opts);
+   }
 
-      // set the location
-      new GeoFixAsyncCallback(point.getLatitude(), point.getLongitude()).execute();
+   /**
+    * Clear the last-placed marker
+    */
+   private void clearMarker() {
+      if (_currentMarker != null) {
+         _currentMarker.clear();
+      }
    }
 
    private void setSuccessMessage(String message) {
@@ -174,7 +196,7 @@ public class GpsEmulator implements EntryPoint, ClickMapHandler {
       
       /**
        * Constructor
-       * 
+       *
        * @param hostname the hostname
        * @param port the port
        */
@@ -204,6 +226,8 @@ public class GpsEmulator implements EntryPoint, ClickMapHandler {
        * Execute service method
        */
       public void execute() {
+         // clear the marker and message when (re-)connecting
+         clearMarker();
          clearMessage();
          _service.connect(_hostname, _port, this);
       }
@@ -235,6 +259,8 @@ public class GpsEmulator implements EntryPoint, ClickMapHandler {
        * @param result void
        */
       public void onSuccess(final Void result) {
+         // add the new marker
+         _currentMarker = addMarker(_latitude, _longitude);
          setSuccessMessage("geo fix " + _longitude + " " + _latitude);
       }
       
@@ -249,6 +275,8 @@ public class GpsEmulator implements EntryPoint, ClickMapHandler {
        * Execute service method
        */
       public void execute() {
+         // clear the marker and message before setting new location
+         clearMarker();
          clearMessage();
          _service.setLocation(_latitude, _longitude, this);
       }
