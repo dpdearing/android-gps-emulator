@@ -6,6 +6,7 @@ package com.dpdearing.sandbox.gpsemulator.client;
 
 import com.dpdearing.sandbox.gpsemulator.common.LocationServiceAsync;
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.maps.client.MapOptions;
@@ -36,7 +37,7 @@ public class GpsEmulator implements EntryPoint, ClickMapHandler {
 
    static private final String SUCCESS_STYLE = "success";
    static private final String ERROR_STYLE = "error";
-   
+
    /**
     * Create a remote service proxy to talk to the server-side Location service.
     */
@@ -61,6 +62,14 @@ public class GpsEmulator implements EntryPoint, ClickMapHandler {
     * This is the entry point method.
     */
    public void onModuleLoad() {
+      GWT.setUncaughtExceptionHandler(
+            new GWT.UncaughtExceptionHandler() {
+               public void onUncaughtException(Throwable t) {
+                  GWT.log("Client-side uncaught exception", t);
+               }
+           }
+      );
+
       // This _should_ be using LoadApi.go(onLoad, loadLibraries, sensor) to
       // then call buildUi() from within a Runnable (onLoad) but this does not
       // seem to work.  The map does not appear until after resizing the browser
@@ -130,7 +139,7 @@ public class GpsEmulator implements EntryPoint, ClickMapHandler {
     */
    public void onEvent(ClickMapEvent clickMapEvent) {
       final LatLng point = clickMapEvent.getMouseEvent().getLatLng();
-      
+
       // set the location
       new GeoFixAsyncCallback(point.getLatitude(), point.getLongitude()).execute();
    }

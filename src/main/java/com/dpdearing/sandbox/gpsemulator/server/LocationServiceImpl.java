@@ -10,6 +10,8 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.dpdearing.sandbox.gpsemulator.common.EmulatorCommandException;
+import com.dpdearing.sandbox.gpsemulator.common.EmulatorConnectionException;
 import com.dpdearing.sandbox.gpsemulator.common.LocationService;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
@@ -28,6 +30,8 @@ public class LocationServiceImpl extends RemoteServiceServlet implements Locatio
     * The telnet wrapper.
     */
    final private TelnetWrapper _telnet;
+
+   private Boolean _isTelnetActive = false;
 
    /**
     * The emulator authentication token
@@ -58,17 +62,35 @@ public class LocationServiceImpl extends RemoteServiceServlet implements Locatio
    /**
     * {@inheritDoc}
     */
-   public void connect(final String hostname, final int port) throws IOException {
+   public void connect(final String hostname, final int port)
+         throws EmulatorConnectionException {
       // disconnect from any previous connection
-      _telnet.disconnect();
+      try {
+         _telnet.disconnect();
+      } catch (IOException ioe) {
+         throw new EmulatorConnectionException(ioe.getMessage());
+      }
+      _isTelnetActive = false;
+
       // connect to the specified host
       logger.info("Connecting to emulator at "+ hostname + ":" + port);
-      _telnet.connect(hostname, port);
+
+      try {
+         _telnet.connect(hostname, port);
+         _isTelnetActive = true;
+      } catch (IOException ioe) {
+         throw new EmulatorConnectionException(ioe.getMessage());
+      }
+
       if (_emulator_console_auth_token == null) {
          logger.info("No emulator_console_auth_token; skipping authentication");
       } else {
          logger.info("Authenticating with emulator_console_auth_token: " + _emulator_console_auth_token);
-         _telnet.send("auth " + _emulator_console_auth_token);
+         try {
+            _telnet.send("auth " + _emulator_console_auth_token);
+         } catch (IOException ioe) {
+            throw new EmulatorConnectionException(ioe.getMessage());
+         }
       }
    }
    
@@ -76,8 +98,22 @@ public class LocationServiceImpl extends RemoteServiceServlet implements Locatio
     * {@inheritDoc}
     */
    public void setLocation(final double latitude, final double longitude)
-         throws IOException {
-      // telnet the geo fix location: longitude first!
-      _telnet.send("geo fix " + longitude + " " + latitude);
+         throws EmulatorCommandException {
+      if (_isTelnetActive) {
+         try {
+            // telnet the geo fix location: longitude first!
+            String geo = "geo fix " + longitude + " " + latitude;
+            logger.info("Sending command: " + geo);
+            _telnet.send(geo);
+         } catch (IOException ioe) {
+            throw new EmulatorCommandException(ioe.getMessage());
+         } catch (Exception npe) {
+            throw new EmulatorCommandException("Unexpected error within telnet connection.");
+         }
+      }
+      else {
+         // throw an exception or client will think that setLocation() was a success
+         throw new EmulatorCommandException("Not connected to the emulator.");
+      }
    }
 }

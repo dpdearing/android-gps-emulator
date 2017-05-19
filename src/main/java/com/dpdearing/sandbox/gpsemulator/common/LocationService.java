@@ -4,8 +4,6 @@
 
 package com.dpdearing.sandbox.gpsemulator.common;
 
-import java.io.IOException;
-
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -21,9 +19,9 @@ public interface LocationService extends RemoteService {
     *           the hostname
     * @param port
     *           the port number
-    * @throws IOException
+    * @throws EmulatorConnectionException
     */
-   void connect(String hostname, int port) throws IOException;
+   void connect(String hostname, int port) throws EmulatorConnectionException;
 
    /**
     * Set the geospatial location
@@ -32,7 +30,7 @@ public interface LocationService extends RemoteService {
     *           latitude
     * @param longitude
     *           longitude
-    * @throws IOException
+    * @throws EmulatorCommandException
     */
-   void setLocation(double latitude, double longitude) throws IOException;
+   void setLocation(double latitude, double longitude) throws EmulatorCommandException;
 }
