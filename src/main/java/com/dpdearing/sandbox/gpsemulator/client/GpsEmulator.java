@@ -7,6 +7,8 @@ package com.dpdearing.sandbox.gpsemulator.client;
 import com.dpdearing.sandbox.gpsemulator.common.LocationServiceAsync;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.maps.client.MapOptions;
@@ -187,6 +189,7 @@ public class GpsEmulator implements EntryPoint, ClickMapHandler {
       _info.addStyleDependentName(ERROR_STYLE);
       _info.setText(message);
       _info.setVisible(true);
+      flash();
    }
 
    private void clearMessage() {
@@ -194,6 +197,19 @@ public class GpsEmulator implements EntryPoint, ClickMapHandler {
       _info.removeStyleDependentName(ERROR_STYLE);
       _info.removeStyleDependentName(SUCCESS_STYLE);
       _info.setVisible(false);
+      resetFlash();
+   }
+
+   private void flash() {
+      getFlashElement().addClassName("active");
+   }
+
+   private void resetFlash() {
+      getFlashElement().removeClassName("active");
+   }
+
+   private Element getFlashElement() {
+      return Document.get().getElementById("error-flash");
    }
 
    /**
