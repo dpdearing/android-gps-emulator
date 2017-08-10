@@ -20,3 +20,11 @@ GWT Hosted Mode
 2. From the command line execute **`mvn gwt:run`**
 3. Click `Launch Default Browser` from the GWT Development Mode
 
+Switching Port
+--------------
+
+android-gps-emulator by default on port 8080.
+
+The port can be changed by passing the desired port as a parameter when running the `.war`, e.g.:
+
+**`java -jar android-gps-emulator-0.2.war 9001`**
