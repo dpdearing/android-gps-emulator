@@ -23,7 +23,7 @@ GWT Hosted Mode
 Switching Port
 --------------
 
-android-gps-emulator by default on port 8080.
+android-gps-emulator runs by default on port 8080.
 
 The port can be changed by passing the desired port as a parameter when running the `.war`.
 
