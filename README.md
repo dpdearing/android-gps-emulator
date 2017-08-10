@@ -25,6 +25,8 @@ Switching Port
 
 android-gps-emulator by default on port 8080.
 
-The port can be changed by passing the desired port as a parameter when running the `.war`, e.g.:
+The port can be changed by passing the desired port as a parameter when running the `.war`.
+
+e.g. to run on port 9001:
 
 **`java -jar android-gps-emulator-0.2.war 9001`**
