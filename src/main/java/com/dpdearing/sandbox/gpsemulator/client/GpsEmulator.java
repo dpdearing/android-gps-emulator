@@ -11,6 +11,7 @@ import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.maps.client.LoadApi;
 import com.google.gwt.maps.client.MapOptions;
 import com.google.gwt.maps.client.MapWidget;
 import com.google.gwt.maps.client.base.LatLng;
@@ -72,19 +73,49 @@ public class GpsEmulator implements EntryPoint, ClickMapHandler {
            }
       );
 
-      // This _should_ be using LoadApi.go(onLoad, loadLibraries, sensor) to
-      // then call buildUi() from within a Runnable (onLoad) but this does not
-      // seem to work.  The map does not appear until after resizing the browser
-      // window.  Instead, the Google Maps API is loaded directly from a <script>
-      // tag at the bottom of index.html, which seems to consistently load before
-      // onModuleLoad is called.
-      buildUi();
+      initializeUI();
+      loadMapApi();
+   }
+
+   /**
+    * Retrieve the Google Maps API key and load the API
+    */
+   private void loadMapApi() {
+      // retrieve the Google Maps API Key and then initialize the UI
+      _service.getApiKey(new AsyncCallback<String>() {
+
+         @Override
+         public void onFailure(Throwable caught) {
+            setErrorMessage(caught.getLocalizedMessage());
+         }
+
+         @Override
+         public void onSuccess(String apiKey) {
+            loadMapApi(apiKey);
+         }
+      });
+   }
+
+   /**
+    * Load the GWT Google Maps API using the provided API key.
+    *
+    * @param apiKey
+    */
+   private void loadMapApi(String apiKey) {
+      final StringBuilder otherParameters = new StringBuilder();
+      if (apiKey != null) {
+         otherParameters.append("key=");
+         otherParameters.append(apiKey);
+      }
+      GWT.log("LoadApi otherParameters: "+otherParameters.toString());
+
+      LoadApi.go(this::initializeMap, null, false, otherParameters.toString());
    }
    
    /**
-    * Initialize the UI
+    * Initialize the Emulator UI
     */
-   private void buildUi() {
+   private void initializeUI() {
       // Create textboxes and set default hostname and port
       _hostname = new TextBox();
       _hostname.setText(DEFAULT_HOST);
@@ -120,25 +151,33 @@ public class GpsEmulator implements EntryPoint, ClickMapHandler {
       div.add(_button);
       div.add(_info);
 
+      // add the controls before the map so that the div doesn't cover the map
+      RootLayoutPanel.get().add(div);
+   }
+
+   /**
+    * Initialize the Map widget and default zoom/position
+    */
+   private void initializeMap() {
       // Create a map centered on Cawker City, KS USA
       final MapOptions opts = MapOptions.newInstance();
-      final LatLng cawkerCity = LatLng.newInstance(39.509, -98.434);
-      opts.setCenter(cawkerCity);
-      opts.setZoom(4);
+      if (opts == null) {
+         GWT.log("MapOptions was null");
+      }
+      final LatLng center = LatLng.newInstance(30.0, 0.00);
+      opts.setCenter(center);
+      opts.setZoom(2);
 
       _map = new MapWidget(opts);
 
       // Register map click handler
       _map.addClickHandler(this);
-
-      // add the controls before the map so that the div doesn't cover the map
-      RootLayoutPanel.get().add(div);
       RootLayoutPanel.get().add(_map);
    }
 
-   /**
-    * Handle a map click event
-    */
+      /**
+       * Handle a map click event
+       */
    public void onEvent(ClickMapEvent clickMapEvent) {
       final LatLng point = clickMapEvent.getMouseEvent().getLatLng();
 

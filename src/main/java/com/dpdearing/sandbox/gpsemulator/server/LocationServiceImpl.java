@@ -27,10 +27,14 @@ public class LocationServiceImpl extends RemoteServiceServlet implements Locatio
            Logger.getLogger(LocationServiceImpl.class.getName());
 
    /**
+    * The Google Maps API Key file
+    */
+   final private File GOOGLE_MAPS_API_KEY_FILE = new File("google_maps_api_key");
+
+   /**
     * The telnet wrapper.
     */
    final private TelnetWrapper _telnet;
-
    private Boolean _isTelnetActive = false;
 
    /**
@@ -48,7 +52,7 @@ public class LocationServiceImpl extends RemoteServiceServlet implements Locatio
       final String home = System.getProperty("user.home");
       final File authTokenFile = new File(home, ".emulator_console_auth_token");
       try {
-         // read the entire contents of the
+         // read the entire contents of the file
          _emulator_console_auth_token = new Scanner(authTokenFile).useDelimiter("\\Z").next();
          logger.info("Loaded emulator_console_auth_token " + _emulator_console_auth_token);
       } catch (IOException ioe) {
@@ -58,7 +62,7 @@ public class LocationServiceImpl extends RemoteServiceServlet implements Locatio
                  ioe);
       }
    }
-   
+
    /**
     * {@inheritDoc}
     */
@@ -85,7 +89,8 @@ public class LocationServiceImpl extends RemoteServiceServlet implements Locatio
       if (_emulator_console_auth_token == null) {
          logger.info("No emulator_console_auth_token; skipping authentication");
       } else {
-         logger.info("Authenticating with emulator_console_auth_token: " + _emulator_console_auth_token);
+         logger.info("Authenticating with emulator_console_auth_token: " +
+               _emulator_console_auth_token);
          try {
             _telnet.send("auth " + _emulator_console_auth_token);
          } catch (IOException ioe) {
@@ -116,4 +121,29 @@ public class LocationServiceImpl extends RemoteServiceServlet implements Locatio
          throw new EmulatorCommandException("Not connected to the emulator.");
       }
    }
+
+   /**
+    * {@inheritDoc}
+    */
+   public String getApiKey() throws EmulatorCommandException {
+      try {
+         return loadGoogleMapsApiKey();
+      } catch (IOException ioe) {
+         final String message = "Failed to read the Google Maps API Key from " +
+               GOOGLE_MAPS_API_KEY_FILE.getAbsolutePath();
+
+         logger.log(Level.SEVERE, message, ioe);
+         throw new EmulatorCommandException(message);
+      }
+   }
+
+   private String loadGoogleMapsApiKey() throws IOException {
+      // read the entire contents of the file
+      logger.info("Reading Google Maps API Key file at " +
+            GOOGLE_MAPS_API_KEY_FILE.getAbsolutePath());
+      final String apiKey = new Scanner(GOOGLE_MAPS_API_KEY_FILE).useDelimiter("\\Z").next();
+      logger.info("Loaded Google Maps API Key: " + apiKey);
+      return apiKey;
+   }
+
 }

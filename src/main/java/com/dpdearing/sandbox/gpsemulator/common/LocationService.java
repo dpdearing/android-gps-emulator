@@ -33,4 +33,10 @@ public interface LocationService extends RemoteService {
     * @throws EmulatorCommandException
     */
    void setLocation(double latitude, double longitude) throws EmulatorCommandException;
+
+   /**
+    * @return the Google Maps API Key
+    * @throws EmulatorCommandException
+    */
+   String getApiKey() throws EmulatorCommandException;
 }
