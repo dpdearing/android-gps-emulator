@@ -17,12 +17,15 @@
         margin: 0;
         padding: 0;
       }
+      body {
+        background-color: #d4d4d4 !important;
+      }
       .emulator-controls {
         z-index: 1;
         display: inline-block;
-        top: 10px !important;
+        top: 9px !important;
         margin: auto;
-        width: 415px;
+        width: 400px;
         pointer-events: none;
       }
       .emulator-hostname {
@@ -49,15 +52,25 @@
       }
       .emulator-info {
         display: block;
-        margin: 5px 5px 0 1px;
-        padding: 2px;
         margin: 5px 0px;
+        padding: 6px;
+        border: 1px solid white;
+        border-radius: 5px;
         background-color: white;
         font-family: Roboto,Arial,sans-serif;
+        font-size: 16px;
         pointer-events: initial;
       }
-      .emulator-info-error {color: #c30000;}
-      .emulator-info-success {color: green;}
+      .emulator-info-error {
+        color: #940000;
+        background-color: #f8d7da;
+        border-color: #eeaaaa;
+      }
+      .emulator-info-success {
+        color: #155724;
+        background-color: #d4edda;
+        border-color: #83cb94;
+      }
       #error-flash {
         pointer-events: none;
         z-index: 1;
